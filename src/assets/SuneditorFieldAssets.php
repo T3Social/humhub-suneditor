@@ -8,8 +8,10 @@ use Yii;
 
 /**
  * Everything {@see \cuzyapp\suneditor\widgets\SuneditorField} needs: the
- * SunEditor library itself and this package's own bootstrap, which creates the
- * editor instance and routes each upload to the plugin that renders it.
+ * SunEditor library itself, this package's own bootstrap, which creates the
+ * editor instance and routes each upload to the plugin that renders it, and
+ * `theme.css`, which maps SunEditor's `--se-*` design tokens onto HumHub's
+ * theme so the editor follows the site's colours and its light/dark mode.
  *
  * The library and the bootstrap live in two different directories — SunEditor
  * under the sibling `npm-asset/suneditor` Composer package, the bootstrap under
@@ -21,6 +23,10 @@ use Yii;
 class SuneditorFieldAssets extends AssetBundle
 {
     public $sourcePath = __DIR__ . '/../resources';
+
+    public $css = [
+        'css/theme.css',
+    ];
 
     public $js = [
         'js/humhub.suneditor.js',
@@ -41,7 +47,8 @@ class SuneditorFieldAssets extends AssetBundle
         $suneditorUrl = Yii::getAlias($suneditorUrl);
 
         // Prepended: the bootstrap in $js above calls SUNEDITOR.create() at
-        // registration time, so the library it refers to must already exist.
+        // registration time, so the library it refers to must already exist —
+        // and theme.css overrides SunEditor's stylesheet, so that must come first.
         array_unshift($this->js, $suneditorUrl . '/suneditor.min.js');
         array_unshift($this->css, $suneditorUrl . '/suneditor.min.css');
     }

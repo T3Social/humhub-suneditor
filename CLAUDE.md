@@ -21,7 +21,7 @@ src/
 ├── helpers/EditorFileHelper.php    # attach/orphan-cleanup at save time
 ├── helpers/FileDuplicator.php      # independent file copy for record duplication
 ├── assets/SuneditorFieldAssets.php / SuneditorContentAssets.php
-└── resources/js/humhub.suneditor.js, resources/css/content.css
+└── resources/js/humhub.suneditor.js, resources/css/theme.css, resources/css/content.css
 ```
 
 `npm-asset/suneditor` (vendored via asset-packagist) is the actual SunEditor
@@ -130,6 +130,25 @@ CHANGELOG.md entry); this is only the index so you know where to look:
   one. Called last, it blesses an injected `<script>` that arrived through an
   interpolated value with a valid CSP nonce. Documented on the method and in the
   README; worth checking in any consumer that renders unpurified content.
+- **Theming goes through SunEditor's `--se-*` tokens, not its `theme` option.**
+  SunEditor v3 styles the editor chrome *and* the content through ~150 custom
+  properties declared on `.sun-editor, .sun-editor-editable` — a fixed light
+  palette plus `Helvetica Neue` at 16px (serif fallback where not installed),
+  so in dark mode rendered content was a white box of serif text. Its `theme`
+  option (`theme: 'dark'` → `.se-theme-dark`) is just another fixed palette and
+  would need JS to track HumHub's colour-mode switch. `resources/css/theme.css`
+  instead redefines every token in terms of Bootstrap 5.3 colour-mode tokens
+  and HumHub's `--hh-*` surfaces, which already flip under
+  `[data-bs-theme=dark]`. Three details that are not obvious from the file:
+  every selector is prefixed with `html` because Yii registers a CSS file once,
+  at its first position, so on a page with both bundles SunEditor's own token
+  block can land *after* theme.css; font family/size are `inherit`, not mapped
+  to `--bs-body-font-family`, because a theme can customise the body font at
+  runtime (the dev theme does, via `--hh-ct-font-family`); and `th` gets
+  HumHub's primary-background header style because SunEditor has cells inherit
+  the row's (transparent) background while HumHub's `[data-ui-markdown]`
+  wrapper forces white header text with `!important`. See
+  [CHANGELOG.md#1.3.2](CHANGELOG.md).
 - **`EditorFileHelper::sync()`'s `$keepGuids` contract is easy to get wrong.**
   It must be *every* guid the record owns outside the editor field, not just
   "whatever this request's form happened to submit" — a caller that passes an
@@ -173,6 +192,17 @@ Practical notes, each of which cost a cycle to rediscover:
 - **Type through `selection.setRange()` on a text node**, then
   `keyboard.type()`. Clicking `.se-wrapper-wysiwyg` does not reliably place the
   caret headless, and a test that types nowhere passes for the wrong reason.
+
+For a **CSS** change no Playwright is needed: a static page that links the dev
+install's compiled theme (`/var/www/dev/assets/<hash>/resources/css/theme.css`
+— the hash changes; find it by size, it is the only ~430 KB stylesheet under
+`assets/`), the vendored SunEditor `dist/*.css`, and this package's own
+stylesheets, with `data-bs-theme="dark"` on `<html>`, screenshotted with
+`google-chrome --headless=new --screenshot --virtual-time-budget=4000`. An
+`onload` that clicks a toolbar button by `data-command` captures an open
+dropdown/modal/code view too. Define `--hh-ct-font-family` on `:root` in that
+page: the dev theme's customizer sets it at runtime and the compiled CSS falls
+back to `serif` without it.
 
 This is worth doing again for any change to `editorOptions` handling,
 `buttonList`/`excludeButtons` logic, or anything touching the code-view

@@ -5,6 +5,27 @@ All notable changes to this package are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.2] - 2026-10-22
+
+### Fixed
+
+- The editor and rendered content now follow the HumHub theme, including its
+  dark colour mode. SunEditor v3 styles both through `--se-*` design tokens
+  holding a fixed light palette (white surfaces, `#333` text) and
+  `Helvetica Neue` at 16px — not HumHub's font, and where it is not installed
+  the browser's serif — so in dark mode a stream entry showed a white, padded
+  box of serif text. A new `theme.css`, loaded by both asset bundles, redefines
+  every token in terms of Bootstrap 5.3's colour-mode tokens (`--bs-body-*`,
+  `--bs-border-color`, `--bs-accent-*`, …) and HumHub's own `--hh-*` surfaces,
+  which HumHub already flips under `[data-bs-theme=dark]`, and has font family
+  and size inherit from the page, so a theme that customises the body font is
+  followed too. Rendered content no longer carries SunEditor's own background
+  and inner padding, and table header cells take HumHub's rich-text header
+  style (primary background, contrasting text): SunEditor had them inherit the
+  row's background, over which HumHub's `[data-ui-markdown]` wrapper forces
+  white text — invisible in light mode. The editor frame follows a HumHub
+  `.form-control`: a 2px border in the page colour, accent while focused.
+
 ## [1.3.1] - 2026-08-31
 
 ### Fixed
@@ -248,6 +269,7 @@ option this package sets and to each other:
 - Initial release: `SuneditorField`/`SuneditorContent` widgets, the generic
   upload `Action`, and the `EditorFileHelper` file-lifecycle helper.
 
+[1.3.2]: https://github.com/cuzy-app/humhub-suneditor/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/cuzy-app/humhub-suneditor/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/cuzy-app/humhub-suneditor/compare/v1.2.3...v1.3.0
 [1.2.3]: https://github.com/cuzy-app/humhub-suneditor/compare/v1.2.2...v1.2.3

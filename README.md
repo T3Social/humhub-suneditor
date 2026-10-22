@@ -200,6 +200,14 @@ use cuzyapp\suneditor\widgets\SuneditorContent;
 <?= SuneditorContent::widget(['content' => $model->description]) ?>
 ```
 
+Both the editor and the rendered content take their colours, font and size from
+the HumHub theme — Bootstrap 5.3's colour-mode tokens and HumHub's own `--hh-*`
+variables — so they follow the site's theme and its dark mode with nothing to
+configure. The package's `theme.css` maps SunEditor's `--se-*` design tokens
+onto those; a theme that wants the editor to look different can redefine any
+of them on `.sun-editor` / `.sun-editor-editable`, with a selector more specific
+than `html .sun-editor`.
+
 Renders nothing for empty content, so callers don't need to guard the call.
 
 `purify()` never allows `script` or `style` through, on purpose and not

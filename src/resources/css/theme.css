@@ -1,0 +1,206 @@
+/* Maps SunEditor's design tokens onto HumHub's theme, so the editor and the
+   content it renders follow the active HumHub theme — and its light/dark colour
+   mode — instead of SunEditor's own hard-coded palette.
+
+   SunEditor v3 styles everything through `--se-*` custom properties declared on
+   `.sun-editor, .sun-editor-editable` (vendor `src/assets/design/*.css`, inlined
+   into both dist stylesheets). Left alone they are a fixed light palette
+   (`#fff` surfaces, `#333` text) and `Helvetica Neue` at 16px, which in dark
+   mode produces a white box of serif text in the middle of the page. Each token
+   is redefined here in terms of the Bootstrap 5.3 colour-mode tokens
+   (`--bs-body-*`, `--bs-border-color`, `--bs-*-bg-subtle`, …) and HumHub's own
+   `--hh-*` surfaces, all of which HumHub already flips under
+   `[data-bs-theme=dark]`, so nothing here needs a dark-mode block of its own.
+
+   SunEditor also ships named themes (`theme: 'dark'` → `.se-theme-dark`), but
+   those are other fixed palettes, not the site's, and would still need JS to
+   track HumHub's colour-mode switch. Redefining the tokens does neither.
+
+   Loaded by both asset bundles, after SunEditor's own stylesheet. `html` is
+   prefixed to every selector on purpose: Yii registers a CSS file once, at the
+   position of its first registration, so on a page that loads both bundles
+   SunEditor's own `.sun-editor, .sun-editor-editable` block can end up *after*
+   this file. The extra specificity makes these win regardless of order. */
+
+html .sun-editor,
+html .sun-editor-editable {
+    /* --- typography ---------------------------------------------------- */
+    /* Font family and size are not mapped through SunEditor's tokens (each is
+       read in exactly one place) but set to `inherit` further down, so the
+       editor and rendered content follow whatever the surrounding page uses —
+       including a theme that customises the body font at runtime, which
+       `--bs-body-font-family` alone would miss. */
+    --se-edit-line-height: var(--bs-body-line-height);
+    --se-main-font-size: var(--bs-body-font-size);
+
+    /* --- content: colours ---------------------------------------------- */
+    --se-caret-color: var(--bs-body-color);
+    --se-drag-caret-color: var(--bs-accent);
+    --se-placeholder-color: var(--bs-secondary-color);
+
+    --se-edit-font-color: var(--bs-body-color);
+    --se-edit-font-pre: var(--bs-body-color);
+    --se-edit-font-quote: var(--bs-secondary-color);
+
+    /* The editing surface matches a HumHub `.form-control`; the read-only
+       wrapper overrides this to transparent below. */
+    --se-edit-background-color: var(--hh-background-color-main);
+    --se-edit-background-pre: var(--bs-tertiary-bg);
+
+    --se-edit-border-light: var(--bs-border-color);
+    --se-edit-border-dark: var(--bs-border-color);
+    --se-edit-border-dark-n1: var(--bs-border-color);
+    --se-edit-border-dark-n2: var(--bs-border-color);
+    --se-edit-border-table: var(--bs-border-color);
+
+    --se-edit-anchor: var(--bs-link-color);
+    --se-edit-anchor-on-back: var(--bs-accent-bg-subtle);
+    --se-edit-anchor-on-font: var(--bs-link-hover-color);
+    --se-edit-hr-color: var(--bs-border-color);
+    --se-edit-hr-on-back: var(--bs-accent-bg-subtle);
+
+    --se-edit-active: var(--bs-accent);
+    --se-edit-hover: var(--bs-accent-bg-subtle);
+    --se-edit-outline: var(--bs-border-color);
+
+    /* --- editor chrome: shell, toolbar, code view ----------------------- */
+    --se-main-out-color: var(--hh-background-color-page);
+    --se-main-color: var(--bs-body-color);
+    --se-main-color-lighter: var(--bs-secondary-color);
+    --se-main-background-color: var(--hh-background-color-main);
+    --se-main-font-color: var(--bs-body-color);
+    --se-main-divider-color: var(--bs-border-color);
+    --se-main-border-color: var(--bs-border-color);
+    --se-main-outline-color: var(--bs-border-color);
+    --se-main-shadow-color: rgba(var(--bs-emphasis-color-rgb), 0.1);
+    --se-statusbar-font-color: var(--bs-secondary-color);
+
+    --se-code-view-color: var(--bs-body-color);
+    --se-code-view-background-color: var(--bs-tertiary-bg);
+    --se-code-view-line-color: var(--bs-secondary-color);
+    --se-code-view-line-background-color: var(--bs-secondary-bg);
+    --se-markdown-view-color: var(--bs-body-color);
+    --se-markdown-view-background-color: var(--bs-tertiary-bg);
+    --se-markdown-view-line-color: var(--bs-secondary-color);
+    --se-markdown-view-line-background-color: var(--bs-secondary-bg);
+
+    /* --- editor chrome: hover / active states --------------------------- */
+    --se-hover-color: var(--bs-emphasis-color);
+    --se-hover-dark-color: var(--bs-border-color);
+    --se-hover-dark2-color: var(--bs-border-color);
+    --se-hover-dark3-color: var(--bs-border-color);
+    --se-hover-light-color: var(--bs-secondary-bg);
+    --se-hover-light2-color: var(--bs-secondary-bg);
+    --se-hover-light3-color: var(--bs-secondary-bg);
+
+    --se-active-color: var(--bs-accent);
+    --se-active-hover-color: var(--bs-link-hover-color);
+    --se-active-dark-color: var(--bs-accent);
+    --se-active-dark2-color: var(--bs-accent);
+    --se-active-dark3-color: var(--bs-accent);
+    --se-active-dark4-color: var(--bs-accent);
+    --se-active-dark5-color: var(--bs-accent);
+    --se-active-light-color: var(--bs-accent-bg-subtle);
+    --se-active-light2-color: var(--bs-accent-bg-subtle);
+    --se-active-light3-color: var(--bs-accent-bg-subtle);
+    --se-active-light4-color: var(--bs-accent-bg-subtle);
+    --se-active-light5-color: var(--bs-accent-bg-subtle);
+    --se-active-light6-color: var(--bs-accent-border-subtle);
+
+    --se-shadow-layer: var(--bs-box-shadow);
+    --se-shadow-controller: var(--bs-box-shadow-sm);
+    --se-shadow-controller-color: rgba(var(--bs-emphasis-color-rgb), 0.2);
+    --se-drag-over-color: var(--bs-warning);
+    --se-loading-color: var(--bs-accent);
+
+    --se-block-handle-btn-hover-bg: rgba(var(--bs-emphasis-color-rgb), 0.08);
+    --se-block-handle-btn-active-bg: rgba(var(--bs-emphasis-color-rgb), 0.14);
+    --se-block-hover-bg: rgba(var(--bs-emphasis-color-rgb), 0.04);
+    --se-block-hover-outline: rgba(var(--bs-emphasis-color-rgb), 0.04);
+
+    --se-select-menu-hover-bg: var(--bs-secondary-bg);
+    --se-select-menu-active-bg: var(--bs-accent-bg-subtle);
+
+    /* --- editor chrome: modals, dropdowns, controllers ------------------ */
+    --se-modal-background-color: var(--hh-background-color-main);
+    --se-modal-color: var(--bs-body-color);
+    --se-modal-border-color: var(--bs-border-color);
+    --se-modal-anchor-color: var(--bs-link-color);
+    --se-modal-preview-color: var(--bs-secondary-color);
+    --se-modal-file-input-background-color: var(--bs-tertiary-bg);
+    --se-modal-input-disabled-color: var(--bs-secondary-color);
+    --se-modal-input-disabled-background-color: var(--bs-secondary-bg);
+
+    --se-dropdown-font-color: var(--bs-body-color);
+
+    --se-controller-border-color: var(--bs-border-color);
+    --se-controller-background-color: var(--hh-background-color-main);
+    --se-controller-color: var(--bs-body-color);
+
+    --se-input-btn-border-color: var(--bs-border-color);
+    --se-input-btn-disabled-color: var(--bs-secondary-color);
+
+    --se-table-picker-color: var(--bs-tertiary-bg);
+    --se-table-picker-border-color: var(--bs-border-color);
+    --se-table-picker-highlight-color: var(--bs-accent-bg-subtle);
+    --se-table-picker-highlight-border-color: var(--bs-accent);
+
+    /* --- status palettes (upload feedback) ------------------------------ */
+    --se-success-color: var(--bs-success);
+    --se-success-dark-color: var(--bs-success);
+    --se-success-dark2-color: var(--bs-success);
+    --se-success-dark3-color: var(--bs-success);
+    --se-success-light-color: var(--bs-success-bg-subtle);
+    --se-success-light2-color: var(--bs-success-bg-subtle);
+    --se-success-light3-color: var(--bs-success-bg-subtle);
+    --se-success-light4-color: var(--bs-success-border-subtle);
+    --se-success-light5-color: var(--bs-success-border-subtle);
+
+    --se-error-color: var(--bs-danger);
+    --se-error-dark-color: var(--bs-danger);
+    --se-error-dark2-color: var(--bs-danger);
+    --se-error-dark3-color: var(--bs-danger);
+    --se-error-light-color: var(--bs-danger-bg-subtle);
+    --se-error-light2-color: var(--bs-danger-bg-subtle);
+    --se-error-light3-color: var(--bs-danger-bg-subtle);
+    --se-error-light4-color: var(--bs-danger-border-subtle);
+    --se-error-light5-color: var(--bs-danger-border-subtle);
+}
+
+/* Typography follows the page. SunEditor's own is `Helvetica Neue` at 16px —
+   not HumHub's font, and where it is not installed the browser's serif. */
+html .sun-editor,
+html .sun-editor-editable {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+/* Read-only content (the SuneditorContent widget) is part of whatever surface
+   it is rendered on — a stream entry, a page — not a box of its own: no
+   background of its own and no inner padding, like HumHub's own rich text. */
+html .sun-editor-editable.suneditor-content {
+    --se-edit-background-color: transparent;
+    --se-edit-inner-padding: 0;
+}
+
+/* The editor frame follows HumHub's `.form-control` (see core `_form.scss`):
+   a 2px border in the page colour that turns accent while focused. */
+html .sun-editor {
+    border-width: 2px;
+}
+
+html .sun-editor:focus-within {
+    border-color: var(--bs-accent);
+}
+
+/* Table header cells: SunEditor gives `th` a fixed light-grey background, then
+   has every cell inherit the row's background anyway, which leaves a header
+   with no background at all. HumHub's own rich-text styles (core `_markdown.scss`)
+   set a header cell to the primary colour with contrasting text, and force that
+   text colour with `!important` inside a `[data-ui-markdown]`/`[data-ui-richtext]`
+   wrapper — invisible on a transparent header in light mode. Giving the header
+   HumHub's own background keeps both consistent, in and out of such a wrapper. */
+html .sun-editor-editable table th {
+    background-color: var(--bs-primary);
+    color: var(--hh-primary-contrast);
+}
